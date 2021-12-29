@@ -4,10 +4,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class AppUser implements UserDetails {
     )
     private Long id;
     private String name;
-    private String login;
+    private String surname;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -40,12 +40,12 @@ public class AppUser implements UserDetails {
     private Boolean enabled = false;
 
     public AppUser(String name,
-                   String login,
+                   String surname,
                    String email,
                    String password,
                    AppUserRole appUserRole) {
         this.name = name;
-        this.login = login;
+        this.surname = surname;
         this.email = email;
         this.password = password;
         this.appUserRole = appUserRole;
@@ -62,6 +62,7 @@ public class AppUser implements UserDetails {
         return password;
     }
 
+    @Override
     public String getUsername() {
         return email;
     }
@@ -85,4 +86,6 @@ public class AppUser implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
 }
+

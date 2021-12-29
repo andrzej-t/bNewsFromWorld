@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 public class ConfirmationToken {
 
     @SequenceGenerator(
-            name = "token_sequence",
-            sequenceName = "token_sequence",
+            name = "confirmation_token_sequence",
+            sequenceName = "confirmation_token_sequence",
             allocationSize = 1
     )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "token_sequence"
+            generator = "confirmation_token_sequence"
     )
     private Long id;
 
@@ -50,4 +50,6 @@ public class ConfirmationToken {
         this.expiresAt = expiresAt;
         this.appUser = appUser;
     }
+
 }
+

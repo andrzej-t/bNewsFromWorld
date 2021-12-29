@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BNewsFromWorldApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BNewsFromWorldApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BNewsFromWorldApplication.class, args);
+    }
 
 }
+

@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AppUserService implements UserDetailsService {
 
-    private final static  String USER_NOT_FOUND_MSG = "user with email %s not found";
+    private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
     private final AppUserRepository appUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
@@ -29,11 +29,10 @@ public class AppUserService implements UserDetailsService {
 
     public String signUpUser(AppUser appUser) {
 
-        boolean userExists = appUserRepository.findByEmail(appUser.getEmail())
-                .isPresent();
+        boolean userExists = appUserRepository.findByEmail(appUser.getEmail()).isPresent();
 
         if (userExists) {
-            throw new IllegalStateException("Email already exists");
+            throw new IllegalStateException("Email already taken");
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
@@ -53,9 +52,12 @@ public class AppUserService implements UserDetailsService {
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
-        //TODO: send email
-
         return token;
     }
 
+    public int enableAppUser(String email) {
+        return appUserRepository.enableAppUser(email);
+    }
+
 }
+

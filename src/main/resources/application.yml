@@ -1,4 +1,7 @@
-# DATABASE
+server.error.include-message: always
+server.error.include-binding-errors: always
+
+## DATABASE
 spring.datasource.url: jdbc:mysql://localhost:3306/nfwDB?serverTimezone=Europe/Warsaw&useSSL=False&allowPublicKeyRetrieval=true
 spring.datasource.username: nfwUser_7
 spring.datasource.password: 89_Bnhjk
@@ -7,3 +10,18 @@ spring.jpa.database: mysql
 spring.jpa.show-sql: true
 spring.jpa.hibernate.ddl-auto: update
 spring.jpa.open-in-view: true
+
+#MAIL
+spring.mail.host: localhost
+spring.mail.port: 1025
+spring.mail.username: hello
+spring.mail.password: hello
+
+spring.mail.properties.mail.smtp.ssl.trust: "*"
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls:
+spring.mail.properties.mail.smtp.ssl.enable: false
+spring.mail.properties.mail.smtp.connectiontimeout: 5000
+spring.mail.properties.mail.smtp.timeout: 3000
+spring.mail.properties.mail.smtp.writetimeout: 5000
+
