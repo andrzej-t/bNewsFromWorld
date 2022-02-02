@@ -38,12 +38,13 @@ public class AppUser implements UserDetails {
     private AppUserRole appUserRole;
     private Boolean locked = false;
     private Boolean enabled = false;
-
-    public AppUser(String name,
-                   String surname,
-                   String email,
-                   String password,
-                   AppUserRole appUserRole) {
+    public AppUser(
+            String name,
+            String surname,
+            String email,
+            String password,
+            AppUserRole appUserRole
+    ) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -86,6 +87,4 @@ public class AppUser implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-
 }
-

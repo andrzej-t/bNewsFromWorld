@@ -9,6 +9,4 @@ public class BNewsFromWorldApplication {
     public static void main(String[] args) {
         SpringApplication.run(BNewsFromWorldApplication.class, args);
     }
-
 }
-

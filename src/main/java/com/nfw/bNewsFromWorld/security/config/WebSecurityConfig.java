@@ -21,14 +21,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+//        http
+//                .csrf().disable()
+//                .authorizeRequests()
+//                .antMatchers("/api/v*/registration/**")
+//                .permitAll()
+//                .antMatchers("/api/v*/news/results")
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated().and()
+////                .httpBasic();
+//                .formLogin();
+
         http
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v*/registration/**")
                 .permitAll()
-                .anyRequest()
-                .authenticated().and()
-                .formLogin();
+                .antMatchers("/api/v*/news/results")
+                .permitAll();
     }
 
     @Override
@@ -43,6 +54,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         provider.setUserDetailsService(appUserService);
         return provider;
     }
-
 }
-

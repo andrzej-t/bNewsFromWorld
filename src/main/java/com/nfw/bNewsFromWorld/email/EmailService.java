@@ -16,8 +16,7 @@ public class EmailService implements EmailSender {
 
     private final static Logger LOGGER = LoggerFactory
             .getLogger(EmailService.class);
-
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Autowired
     public EmailService(JavaMailSender mailSender) {
@@ -40,6 +39,4 @@ public class EmailService implements EmailSender {
             throw new IllegalStateException("Failed to send email");
         }
     }
-
 }
-

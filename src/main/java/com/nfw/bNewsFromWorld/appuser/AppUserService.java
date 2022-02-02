@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -55,9 +56,39 @@ public class AppUserService implements UserDetailsService {
         return token;
     }
 
-    public int enableAppUser(String email) {
-        return appUserRepository.enableAppUser(email);
+    public void enableAppUser(String email) {
+        appUserRepository.enableAppUser(email);
     }
 
-}
+    public void unlockAppUser(String email) { appUserRepository.unlockAppUser(email); }
 
+    public void disableAppUser(String email) {
+        appUserRepository.disableAppUser(email);
+    }
+
+    public void lockAppUser(String email) { appUserRepository.lockAppUser(email); }
+
+    public void logUserIn(HttpServletRequest httpServletRequest) {
+
+        String email = httpServletRequest.getHeader("email");
+        String password = httpServletRequest.getHeader("password");
+
+        if (loadUserByUsername(email).isEnabled() && bCryptPasswordEncoder.matches(password, loadUserByUsername(email).getPassword())) {
+            unlockAppUser(email);
+        }
+    }
+
+    public void logUserOut(HttpServletRequest httpServletRequest) {
+        lockAppUser(httpServletRequest.getHeader("email"));
+    }
+
+    public Boolean isUserLocked(HttpServletRequest httpServletRequest) {
+
+        String email = httpServletRequest.getHeader("email");
+        String password = httpServletRequest.getHeader("password");
+
+        if (appUserRepository.findByEmail(email).isPresent() && bCryptPasswordEncoder.matches(password, loadUserByUsername(email).getPassword())) {
+            return appUserRepository.findByEmail(email).get().getLocked();
+        } else return Boolean.TRUE;
+    }
+}
