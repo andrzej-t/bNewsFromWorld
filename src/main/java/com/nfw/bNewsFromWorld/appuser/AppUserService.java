@@ -1,5 +1,7 @@
 package com.nfw.bNewsFromWorld.appuser;
 
+import com.nfw.bNewsFromWorld.registration.LoginRequest;
+import com.nfw.bNewsFromWorld.registration.RegistrationRequest;
 import com.nfw.bNewsFromWorld.registration.token.ConfirmationToken;
 import com.nfw.bNewsFromWorld.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
@@ -55,8 +57,26 @@ public class AppUserService implements UserDetailsService {
         return token;
     }
 
-    public int enableAppUser(String email) {
-        return appUserRepository.enableAppUser(email);
+    public void enableAppUser(String email) {
+        appUserRepository.enableAppUser(email);
+    }
+
+    public void unlockAppUser(String email) { appUserRepository.unlockAppUser(email); }
+
+    public void disableAppUser(String email) {
+        appUserRepository.disableAppUser(email);
+    }
+
+    public void lockAppUser(String email) { appUserRepository.lockAppUser(email); }
+
+    public void logUserIn(LoginRequest loginRequest) {
+        if (loadUserByUsername(loginRequest.getEmail()).isEnabled() && bCryptPasswordEncoder.matches(loginRequest.getPassword(), loadUserByUsername(loginRequest.getEmail()).getPassword())) {
+            unlockAppUser(loginRequest.getEmail());
+        }
+    }
+
+    public void logUserOut(LoginRequest loginRequest) {
+        lockAppUser(loginRequest.getEmail());
     }
 
 }
