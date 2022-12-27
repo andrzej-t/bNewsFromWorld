@@ -14,7 +14,7 @@ public class RegistrationController {
     private final RegistrationService registrationService;
     private final AppUserService appUserService;
 
-    @PostMapping
+    @PostMapping("/register")
     public String register(HttpServletRequest httpServletRequest) {
         return registrationService.register(httpServletRequest);
     }
@@ -32,5 +32,10 @@ public class RegistrationController {
     @PostMapping(path = "/logout")
     public void logOut(HttpServletRequest httpServletRequest) {
         appUserService.logUserOut(httpServletRequest);
+    }
+
+    @PostMapping(path = "/rmnotenabled")
+    public void deleteNotEnabledAccounts() {
+        appUserService.removeNotEnabledAccounts();
     }
 }

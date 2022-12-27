@@ -4,6 +4,7 @@ import com.nfw.bNewsFromWorld.appuser.AppUser;
 import com.nfw.bNewsFromWorld.appuser.AppUserRole;
 import com.nfw.bNewsFromWorld.appuser.AppUserService;
 import com.nfw.bNewsFromWorld.email.EmailService;
+import com.nfw.bNewsFromWorld.exception.*;
 import com.nfw.bNewsFromWorld.registration.token.ConfirmationToken;
 import com.nfw.bNewsFromWorld.registration.token.ConfirmationTokenService;
 import com.nfw.bNewsFromWorld.security.PasswordConfig;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 @Service
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 public class RegistrationService {
 
     private final AppUserService appUserService;
-    private final EmailValidator emailValidator;
+    private final RegistrationRequestValidator registrationRequestValidator;
     private final ConfirmationTokenService confirmationTokenService;
     PasswordConfig passwordConfig;
     EmailService emailService;
@@ -31,10 +33,15 @@ public class RegistrationService {
         String email = request.getHeader("email");
         String password = request.getHeader("password");
 
-        boolean isValidEmail = emailValidator.test(email);
-        if (!isValidEmail) {
-            throw new IllegalStateException("Email not valid");
-        }
+        name = new String(name.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        surname = new String(surname.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        email = new String(email.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        password = new String(password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+
+        registrationRequestValidator.test(new RegistrationRequest(name, surname, email, password));
+
+        appUserService.logUserOut(request);
+
         String token = appUserService.
                 signUpUser(
                         new AppUser(
@@ -60,16 +67,16 @@ public class RegistrationService {
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() ->
-                        new IllegalStateException("token not found"));
+                        new WrongRegistrationTokenException(""));
 
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("email already confirmed");
+            throw new EmailAlreadyConfirmedException("");
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
+            throw new RegistrationTokenExpiredException("");
         }
 
         confirmationTokenService.setConfirmedAt(token);

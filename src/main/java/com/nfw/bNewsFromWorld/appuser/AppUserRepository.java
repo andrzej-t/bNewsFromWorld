@@ -34,4 +34,8 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @Query("UPDATE AppUser a SET a.locked = TRUE WHERE a.email = ?1")
     int lockAppUser(String email);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE AppUser a SET a.email = null WHERE a.enabled = false")
+    int deleteNotEnabled();
 }

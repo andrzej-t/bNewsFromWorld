@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PublicationDto {
-
     @JsonProperty("title")
     String title;
     @JsonProperty("description")

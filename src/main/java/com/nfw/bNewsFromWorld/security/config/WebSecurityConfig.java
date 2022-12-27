@@ -7,9 +7,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
+
+import java.util.regex.Pattern;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Configuration
 @AllArgsConstructor
@@ -20,19 +27,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().disable()
-//                .authorizeRequests()
-//                .antMatchers("/api/v*/registration/**")
-//                .permitAll()
-//                .antMatchers("/api/v*/news/results")
-//                .permitAll()
-//                .anyRequest()
-//                .authenticated().and()
-////                .httpBasic();
-//                .formLogin();
+    public void configure(WebSecurity web) {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
 
+        firewall.setAllowUrlEncodedSlash(true);
+        firewall.setAllowBackSlash(true);
+        firewall.setAllowUrlEncodedPercent(true);
+        firewall.setAllowUrlEncodedPeriod(true);
+        firewall.setAllowSemicolon(true);
+
+        // Allow UTF-8 values
+        Pattern allowed = Pattern.compile("[\\p{IsAssigned}&&[^\\p{IsControl}]]*");
+        firewall.setAllowedHeaderValues((header) -> {
+            String parsed = new String(header.getBytes(ISO_8859_1), UTF_8);
+            return allowed.matcher(parsed).matches();
+        });
+        web.httpFirewall(firewall);
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()

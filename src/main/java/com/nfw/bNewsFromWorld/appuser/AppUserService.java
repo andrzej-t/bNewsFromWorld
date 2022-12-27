@@ -1,5 +1,8 @@
 package com.nfw.bNewsFromWorld.appuser;
 
+import com.nfw.bNewsFromWorld.exception.EmptyFieldException;
+import com.nfw.bNewsFromWorld.exception.InvalidCharactersException;
+import com.nfw.bNewsFromWorld.exception.WrongCredentialsException;
 import com.nfw.bNewsFromWorld.registration.token.ConfirmationToken;
 import com.nfw.bNewsFromWorld.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 @AllArgsConstructor
@@ -29,12 +33,6 @@ public class AppUserService implements UserDetailsService {
     }
 
     public String signUpUser(AppUser appUser) {
-
-        boolean userExists = appUserRepository.findByEmail(appUser.getEmail()).isPresent();
-
-        if (userExists) {
-            throw new IllegalStateException("Email already taken");
-        }
 
         String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
 
@@ -60,21 +58,37 @@ public class AppUserService implements UserDetailsService {
         appUserRepository.enableAppUser(email);
     }
 
-    public void unlockAppUser(String email) { appUserRepository.unlockAppUser(email); }
+    public void unlockAppUser(String email) {
+        appUserRepository.unlockAppUser(email);
+    }
 
     public void disableAppUser(String email) {
         appUserRepository.disableAppUser(email);
     }
 
-    public void lockAppUser(String email) { appUserRepository.lockAppUser(email); }
+    public void lockAppUser(String email) {
+        appUserRepository.lockAppUser(email);
+    }
 
     public void logUserIn(HttpServletRequest httpServletRequest) {
 
         String email = httpServletRequest.getHeader("email");
         String password = httpServletRequest.getHeader("password");
 
-        if (loadUserByUsername(email).isEnabled() && bCryptPasswordEncoder.matches(password, loadUserByUsername(email).getPassword())) {
-            unlockAppUser(email);
+        final Pattern pattern = Pattern.compile("^[A-Za-z0-9@.!_-]{1,30}$");
+
+        if (email.isEmpty() || password.isEmpty()) {
+            throw new EmptyFieldException("");
+        } else if (!pattern.matcher(email).matches() || !pattern.matcher(password).matches()) {
+            throw new InvalidCharactersException("");
+        } else {
+            try {
+                if (loadUserByUsername(email).isEnabled() && bCryptPasswordEncoder.matches(password, loadUserByUsername(email).getPassword())) {
+                    unlockAppUser(email);
+                }
+            } catch (RuntimeException e) {
+                throw new WrongCredentialsException("");
+            }
         }
     }
 
@@ -90,5 +104,9 @@ public class AppUserService implements UserDetailsService {
         if (appUserRepository.findByEmail(email).isPresent() && bCryptPasswordEncoder.matches(password, loadUserByUsername(email).getPassword())) {
             return appUserRepository.findByEmail(email).get().getLocked();
         } else return Boolean.TRUE;
+    }
+
+    public void removeNotEnabledAccounts() {
+        appUserRepository.deleteNotEnabled();
     }
 }

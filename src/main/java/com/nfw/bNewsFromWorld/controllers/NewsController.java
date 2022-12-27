@@ -20,7 +20,7 @@ public class NewsController {
     private final AppUserService appUserService;
 
     @GetMapping(value = "/results")
-    public List<PublicationDto> getAllPublications(@RequestParam String searchedText, @RequestParam String language, @RequestParam String category, @RequestParam Integer page, @RequestParam String published_before, HttpServletRequest httpServletRequest) {
+    public List<PublicationDto> getPublications(@RequestParam String searchedText, @RequestParam String language, @RequestParam String category, @RequestParam Integer page, @RequestParam String published_before, HttpServletRequest httpServletRequest) {
 
         if (!appUserService.isUserLocked(httpServletRequest)) {
             return newsClient.getPublications(searchedText, language, category, page, published_before).getPublicationDtoList();

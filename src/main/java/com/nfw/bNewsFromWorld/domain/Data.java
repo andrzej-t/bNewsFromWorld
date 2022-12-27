@@ -11,8 +11,6 @@ import java.util.List;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Data {
-
     @JsonProperty("data")
     List<PublicationDto> publicationDtoList;
-
 }

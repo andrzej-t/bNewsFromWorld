@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class Publication {
-
     private String title;
     private String description;
     private String url;

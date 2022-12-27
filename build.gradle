@@ -24,10 +24,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'org.postgresql:postgresql:42.5.1'
+//	implementation 'org.postgresql:postgresql:42.5.1'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.7.1'
+	implementation group: 'io.github.cdimascio', name: 'dotenv-java', version: '2.3.1'
 }
 
 test {
